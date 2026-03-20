@@ -45,95 +45,168 @@ export default async function SkillPage({ params }: SkillPageProps) {
   const freq = FREQUENCY_LABELS[skill.frequency] || skill.frequency;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
-      <nav className="mb-6 text-sm text-muted-foreground">
-        <Link href="/" className="hover:text-foreground transition-colors">
+      <nav className="animate-fade-in mb-8 flex items-center gap-2 text-sm text-muted-foreground">
+        <Link
+          href="/"
+          className="transition-colors hover:text-foreground"
+        >
           Главная
         </Link>
-        <span className="mx-2">/</span>
+        <span className="text-border">/</span>
         <Link
           href="/kz/advokat"
-          className="hover:text-foreground transition-colors"
+          className="transition-colors hover:text-foreground"
         >
           Адвокат
         </Link>
-        <span className="mx-2">/</span>
-        <span className="text-foreground">{skill.title}</span>
+        <span className="text-border">/</span>
+        <span className="truncate text-foreground">{skill.title}</span>
       </nav>
 
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex flex-wrap items-center gap-2 mb-3">
-          <span
-            className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground"
-          >
-            <span role="img" aria-label={typeLabel}>
-              {typeIcon}
+      {/* Two-column layout */}
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
+        {/* LEFT COLUMN - Info */}
+        <div className="lg:col-span-3">
+          {/* Type Badge */}
+          <div className="animate-fade-up mb-4">
+            <span className="glass inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-foreground">
+              <span role="img" aria-label={typeLabel}>
+                {typeIcon}
+              </span>
+              {typeLabel}
             </span>
-            {typeLabel}
-          </span>
-        </div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          {skill.title}
-        </h1>
-        <p className="mt-2 text-base text-muted-foreground">
-          {skill.skill_spec.one_liner}
-        </p>
-      </div>
+          </div>
 
-      {/* Metrics row */}
-      <div className="mb-8 flex flex-wrap gap-4">
-        {skill.time_waste_h > 0 && (
-          <div className="flex items-center gap-2 rounded-lg border border-border/50 bg-card px-4 py-2.5">
-            <span className="text-lg">&#9201;</span>
-            <div>
-              <div className="text-sm font-medium text-card-foreground">
-                ~{skill.time_waste_h}ч / {freq}
+          {/* Title */}
+          <div className="animate-fade-up [animation-delay:80ms]">
+            <h1 className="font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+              {skill.title}
+            </h1>
+            <p className="mt-3 text-lg text-muted-foreground sm:text-xl">
+              {skill.skill_spec.one_liner}
+            </p>
+          </div>
+
+          {/* Metrics cards */}
+          <div className="animate-fade-up mt-8 flex flex-wrap gap-3 [animation-delay:160ms]">
+            {skill.time_waste_h > 0 && (
+              <div className="glow-card glass flex items-center gap-3 rounded-xl px-5 py-4">
+                <span className="text-2xl">&#9201;</span>
+                <div>
+                  <div className="text-base font-semibold text-foreground">
+                    ~{skill.time_waste_h}ч / {freq}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    Экономит времени
+                  </div>
+                </div>
               </div>
-              <div className="text-xs text-muted-foreground">Экономит времени</div>
-            </div>
-          </div>
-        )}
-        {skill.money_risk_kzt > 0 && (
-          <div className="flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-2.5">
-            <span className="text-lg">&#9888;&#65039;</span>
-            <div>
-              <div className="text-sm font-medium text-destructive">
-                {skill.money_risk_kzt.toLocaleString("ru-KZ")} &#8376;
+            )}
+
+            {skill.money_risk_kzt > 0 && (
+              <div className="glow-card flex items-center gap-3 rounded-xl border border-destructive/20 bg-destructive/5 px-5 py-4">
+                <span className="text-2xl">&#9888;&#65039;</span>
+                <div>
+                  <div className="text-base font-semibold text-destructive">
+                    {skill.money_risk_kzt.toLocaleString("ru-KZ")} &#8376;
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    Риск при ошибке
+                  </div>
+                </div>
               </div>
-              <div className="text-xs text-muted-foreground">Риск ошибки</div>
+            )}
+
+            <div className="glow-card flex items-center gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-5 py-4">
+              <span className="text-2xl">&#128176;</span>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground line-through">
+                    200 &#8376;
+                  </span>
+                  <span className="text-base font-bold text-emerald-400">
+                    Бесплатно
+                  </span>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Тестовый период
+                </div>
+              </div>
             </div>
           </div>
-        )}
-        <div className="flex items-center gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-4 py-2.5">
-          <span className="text-lg">&#128176;</span>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground line-through">200 &#8376;</span>
-              <span className="text-sm font-semibold text-emerald-400">Бесплатно</span>
+
+          {/* Problem section */}
+          <div className="animate-fade-up mt-10 [animation-delay:240ms]">
+            <h2 className="font-heading mb-3 text-xl font-semibold text-foreground sm:text-2xl">
+              Какую проблему решает
+            </h2>
+            <p className="text-base leading-relaxed text-muted-foreground">
+              {skill.problem}
+            </p>
+          </div>
+
+          {/* Who needs it */}
+          <div className="animate-fade-up mt-8 [animation-delay:320ms]">
+            <h2 className="font-heading mb-3 text-xl font-semibold text-foreground sm:text-2xl">
+              Кому нужен
+            </h2>
+            <p className="text-base leading-relaxed text-muted-foreground">
+              {skill.who}
+            </p>
+          </div>
+
+          {/* Example queries */}
+          {skill.example_queries.length > 0 && (
+            <div className="animate-fade-up mt-8 [animation-delay:400ms]">
+              <h2 className="font-heading mb-4 text-xl font-semibold text-foreground sm:text-2xl">
+                Примеры запросов
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {skill.example_queries.map((query, index) => (
+                  <span
+                    key={index}
+                    className="glass inline-block rounded-full px-4 py-2 text-sm text-foreground transition-all hover:scale-[1.02] hover:border-primary/30"
+                  >
+                    {query}
+                  </span>
+                ))}
+              </div>
             </div>
-            <div className="text-xs text-muted-foreground">Тестовый период</div>
+          )}
+
+          {/* Pricing section */}
+          <div className="animate-fade-up mt-10 [animation-delay:480ms]">
+            <div className="glass glow-card rounded-2xl p-6">
+              <div className="flex items-center gap-4">
+                <div>
+                  <div className="mb-1 text-sm font-medium uppercase tracking-wider text-muted-foreground">
+                    Стоимость
+                  </div>
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-2xl text-muted-foreground/60 line-through">
+                      200 &#8376;
+                    </span>
+                    <span className="text-3xl font-bold text-emerald-400">
+                      Бесплатно
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Тестовый период &mdash; пользуйтесь без ограничений
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Problem description */}
-      <div className="mb-8 rounded-xl border border-border/50 bg-card p-5">
-        <h2 className="mb-2 text-sm font-semibold text-card-foreground uppercase tracking-wider">
-          Проблема
-        </h2>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {skill.problem}
-        </p>
-      </div>
-
-      {/* Chat widget */}
-      <div className="mb-8">
-        <h2 className="mb-4 text-lg font-semibold text-foreground">
-          Попробовать скилл
-        </h2>
-        <SkillChat skill={skill} />
+        {/* RIGHT COLUMN - Chat */}
+        <div className="lg:col-span-2">
+          <div className="lg:sticky lg:top-20">
+            <SkillChat skill={skill} />
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,24 +1,26 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Playfair_Display, Manrope } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const playfair = Playfair_Display({
+  subsets: ["latin", "cyrillic"],
+  variable: "--font-playfair",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const manrope = Manrope({
+  subsets: ["latin", "cyrillic"],
+  variable: "--font-manrope",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "SkillJobs — AI-скиллы для профессионалов",
+  title: "SkillJobs — AI-инструменты для профессионалов",
   description:
-    "Калькуляторы, чеклисты, шаблоны документов и справочники для профессионалов Казахстана",
+    "Калькуляторы, чеклисты, шаблоны документов и справочники для профессионалов Казахстана. Работают прямо в чате.",
   openGraph: {
-    title: "SkillJobs — AI-скиллы для профессионалов",
+    title: "SkillJobs — AI-инструменты для профессионалов",
     description:
       "Калькуляторы, чеклисты, шаблоны документов и справочники для профессионалов Казахстана",
     type: "website",
@@ -34,25 +36,47 @@ export default function RootLayout({
   return (
     <html
       lang="ru"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={`${playfair.variable} ${manrope.variable} h-full antialiased dark`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">
-        <header className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
-          <div className="mx-auto max-w-6xl flex items-center gap-3 px-4 py-3 sm:px-6">
-            <Link href="/" className="flex items-baseline gap-2 group">
-              <span className="text-lg font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
-                SkillJobs
-              </span>
-              <span className="hidden sm:inline text-sm text-muted-foreground">
-                AI-скиллы для профессионалов
-              </span>
+      <body className="noise min-h-full flex flex-col bg-background text-foreground">
+        <header className="glass sticky top-0 z-50">
+          <div className="mx-auto max-w-7xl flex items-center justify-between px-5 py-3.5 sm:px-8">
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-primary/15 transition-colors group-hover:bg-primary/25">
+                <svg viewBox="0 0 24 24" fill="none" className="size-4 text-primary" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                </svg>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-lg font-bold tracking-tight text-foreground">
+                  Skill<span className="text-primary">Jobs</span>
+                </span>
+                <span className="hidden sm:inline text-xs tracking-wide uppercase text-muted-foreground">
+                  Beta
+                </span>
+              </div>
             </Link>
+            <div className="flex items-center gap-4">
+              <span className="hidden md:inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
+                <span className="size-1.5 rounded-full bg-primary animate-pulse" />
+                Бесплатный доступ
+              </span>
+            </div>
           </div>
         </header>
+
         <main className="flex-1">{children}</main>
-        <footer className="border-t border-border/50 py-6 text-center text-sm text-muted-foreground">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            SkillJobs &copy; 2026 &mdash; AI-скиллы для профессионалов Казахстана
+
+        <footer className="border-t border-border/50 py-8 mt-16">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8">
+            <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+              <span className="text-sm text-muted-foreground">
+                &copy; 2026 SkillJobs
+              </span>
+              <span className="text-xs text-muted-foreground/60">
+                AI-инструменты для профессионалов Казахстана
+              </span>
+            </div>
           </div>
         </footer>
       </body>

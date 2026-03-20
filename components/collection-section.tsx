@@ -1,5 +1,10 @@
-import { type SkillType, type Pain, COLLECTION_NAMES } from "@/lib/types";
-import { SkillCard } from "@/components/skill-card";
+import {
+  type SkillType,
+  type Pain,
+  COLLECTION_NAMES,
+  SKILL_TYPE_ICONS,
+} from "@/lib/types";
+import { SkillCard } from "./skill-card";
 
 interface CollectionSectionProps {
   type: SkillType;
@@ -14,23 +19,24 @@ export function CollectionSection({
 }: CollectionSectionProps) {
   if (skills.length === 0) return null;
 
+  const icon = SKILL_TYPE_ICONS[type];
+  const name = COLLECTION_NAMES[type];
+
   return (
-    <section className="space-y-4">
-      <h2 className="text-xl font-semibold tracking-tight">
-        {COLLECTION_NAMES[type]}
+    <section className="border-t border-border/50 pt-8">
+      <h2 className="mb-6 text-xl font-semibold tracking-tight text-foreground">
+        <span className="mr-2">{icon}</span>
+        {name}
       </h2>
 
-      <div className="relative -mx-4 px-4">
-        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border">
-          {skills.map((skill) => (
-            <div key={skill.id} className="w-72 shrink-0">
-              <SkillCard
-                skill={skill}
-                href={`/kz/${professionSlug}/${skill.id}`}
-              />
-            </div>
-          ))}
-        </div>
+      <div className="stagger-children grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {skills.map((skill) => (
+          <SkillCard
+            key={skill.id}
+            skill={skill}
+            href={`/kz/${professionSlug}/${skill.id}`}
+          />
+        ))}
       </div>
     </section>
   );

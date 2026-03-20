@@ -6,14 +6,6 @@ import {
   SKILL_TYPE_ICONS,
   FREQUENCY_LABELS,
 } from "@/lib/types";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 interface SkillCardProps {
@@ -27,35 +19,36 @@ export function SkillCard({ skill, href }: SkillCardProps) {
   const frequencyLabel = FREQUENCY_LABELS[skill.frequency] ?? skill.frequency;
 
   return (
-    <Link href={href} className="group/link block">
-      <Card className="h-full transition-all duration-200 hover:ring-2 hover:ring-primary/40 hover:shadow-md">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="text-xs">
-              <span className="mr-0.5">{typeIcon}</span>
-              {typeLabel}
-            </Badge>
-          </div>
-          <CardTitle className="mt-1 line-clamp-2">
-            <h3>{skill.title}</h3>
-          </CardTitle>
-        </CardHeader>
+    <Link href={href} className="group/card block">
+      <div
+        className="glow-card flex h-full flex-col rounded-xl border border-border bg-card p-5 transition-all duration-300 hover:-translate-y-0.5"
+      >
+        {/* Type badge */}
+        <Badge variant="secondary" className="mb-3 w-fit text-[11px] text-muted-foreground">
+          <span className="mr-0.5">{typeIcon}</span>
+          {typeLabel}
+        </Badge>
 
-        <CardContent className="flex-1">
-          <CardDescription className="line-clamp-2">
-            {skill.skill_spec.one_liner}
-          </CardDescription>
-        </CardContent>
+        {/* Title */}
+        <h3 className="mb-1.5 line-clamp-2 text-base font-medium leading-snug text-foreground">
+          {skill.title}
+        </h3>
 
-        <CardFooter className="flex items-center justify-between gap-2">
-          <Badge variant="outline" className="text-xs text-muted-foreground">
+        {/* One-liner */}
+        <p className="mb-4 line-clamp-2 flex-1 text-sm leading-relaxed text-muted-foreground">
+          {skill.skill_spec.one_liner}
+        </p>
+
+        {/* Bottom row */}
+        <div className="flex items-center justify-between gap-2">
+          <Badge variant="outline" className="text-[11px] text-muted-foreground">
             {frequencyLabel}
           </Badge>
-          <span className="text-xs font-medium text-primary transition-colors group-hover/link:underline">
+          <span className="text-xs font-medium text-primary transition-colors group-hover/card:text-gold">
             Попробовать &rarr;
           </span>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </Link>
   );
 }
