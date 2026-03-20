@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Playfair_Display, Manrope } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+
+const GA_ID = "G-8RX60HY90J";
 
 const playfair = Playfair_Display({
   subsets: ["latin", "cyrillic"],
@@ -38,6 +41,12 @@ export default function RootLayout({
       lang="ru"
       className={`${playfair.variable} ${manrope.variable} h-full antialiased dark`}
     >
+      <head>
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`}
+        </Script>
+      </head>
       <body className="noise min-h-full flex flex-col bg-background text-foreground">
         <header className="glass sticky top-0 z-50">
           <div className="mx-auto max-w-7xl flex items-center justify-between px-5 py-3.5 sm:px-8">
