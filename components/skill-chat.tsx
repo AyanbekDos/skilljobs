@@ -1,8 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import Link from "next/link";
 import type { Pain } from "@/lib/types";
 import { SKILL_TYPE_LABELS } from "@/lib/types";
+import { createClient } from "@/lib/supabase/client";
 
 interface Message {
   role: "user" | "assistant";
@@ -17,8 +21,16 @@ export function SkillChat({ skill }: SkillChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isAuthed, setIsAuthed] = useState<boolean | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setIsAuthed(!!user);
+    });
+  }, []);
 
   const scrollToBottom = useCallback(() => {
     if (scrollRef.current) {
@@ -124,6 +136,13 @@ export function SkillChat({ skill }: SkillChatProps) {
     sendMessage(query);
   };
 
+  const handleDownloadDocx = async (content: string, title: string) => {
+    const { textToDocx } = await import("@/lib/text-to-docx");
+    const { saveAs } = await import("file-saver");
+    const blob = await textToDocx(content, title);
+    saveAs(blob, `${title.replace(/\s+/g, "_")}.docx`);
+  };
+
   const typeLabel = SKILL_TYPE_LABELS[skill.skill_type];
 
   return (
@@ -213,28 +232,115 @@ export function SkillChat({ skill }: SkillChatProps) {
           )}
 
           {messages.map((message, index) => (
-            <div
-              key={index}
-              className={`flex ${
-                message.role === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
-              {message.role === "assistant" && (
-                <div className="mr-2 mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                  <span className="text-[10px] font-bold text-primary">
-                    AI
-                  </span>
-                </div>
-              )}
+            <div key={index}>
               <div
-                className={`max-w-[85%] px-4 py-2.5 text-sm ${
-                  message.role === "user"
-                    ? "rounded-2xl rounded-br-md bg-primary text-primary-foreground"
-                    : "chat-prose rounded-2xl rounded-bl-md bg-muted/50 text-foreground"
+                className={`flex ${
+                  message.role === "user" ? "justify-end" : "justify-start"
                 }`}
               >
-                <p className="whitespace-pre-wrap">{message.content}</p>
+                {message.role === "assistant" && (
+                  <div className="mr-2 mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <span className="text-[10px] font-bold text-primary">
+                      AI
+                    </span>
+                  </div>
+                )}
+                <div
+                  className={`max-w-[85%] px-4 py-2.5 text-sm ${
+                    message.role === "user"
+                      ? "rounded-2xl rounded-br-md bg-primary text-primary-foreground"
+                      : "chat-prose rounded-2xl rounded-bl-md bg-muted/50 text-foreground"
+                  }`}
+                >
+                  {message.role === "assistant" ? (
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        p: ({ children }) => (
+                          <p className="mb-2 last:mb-0">{children}</p>
+                        ),
+                        strong: ({ children }) => (
+                          <strong className="font-semibold text-foreground">
+                            {children}
+                          </strong>
+                        ),
+                        ul: ({ children }) => (
+                          <ul className="mb-2 ml-4 list-disc space-y-0.5 last:mb-0">
+                            {children}
+                          </ul>
+                        ),
+                        ol: ({ children }) => (
+                          <ol className="mb-2 ml-4 list-decimal space-y-0.5 last:mb-0">
+                            {children}
+                          </ol>
+                        ),
+                        li: ({ children }) => (
+                          <li className="leading-relaxed">{children}</li>
+                        ),
+                        h1: ({ children }) => (
+                          <h1 className="mb-2 mt-3 text-base font-bold first:mt-0">
+                            {children}
+                          </h1>
+                        ),
+                        h2: ({ children }) => (
+                          <h2 className="mb-1.5 mt-2.5 text-sm font-bold first:mt-0">
+                            {children}
+                          </h2>
+                        ),
+                        h3: ({ children }) => (
+                          <h3 className="mb-1 mt-2 text-sm font-semibold first:mt-0">
+                            {children}
+                          </h3>
+                        ),
+                        code: ({ children }) => (
+                          <code className="rounded bg-background/50 px-1 py-0.5 text-xs font-mono">
+                            {children}
+                          </code>
+                        ),
+                        table: ({ children }) => (
+                          <div className="my-2 overflow-x-auto rounded border border-border">
+                            <table className="w-full text-xs">
+                              {children}
+                            </table>
+                          </div>
+                        ),
+                        th: ({ children }) => (
+                          <th className="border-b border-border bg-muted/30 px-2 py-1.5 text-left font-semibold">
+                            {children}
+                          </th>
+                        ),
+                        td: ({ children }) => (
+                          <td className="border-b border-border/50 px-2 py-1.5">
+                            {children}
+                          </td>
+                        ),
+                      }}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
+                  ) : (
+                    <p className="whitespace-pre-wrap">{message.content}</p>
+                  )}
+                </div>
               </div>
+
+              {/* Download DOCX button for completed assistant messages */}
+              {message.role === "assistant" &&
+                message.content.length > 100 &&
+                !isStreaming && (
+                  <div className="ml-8 mt-1.5 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleDownloadDocx(message.content, skill.title)
+                      }
+                      className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1 text-xs text-muted-foreground transition-all hover:border-primary/30 hover:text-foreground"
+                    >
+                      <DocxIcon />
+                      Скачать DOCX
+                    </button>
+                  </div>
+                )}
             </div>
           ))}
 
@@ -255,6 +361,17 @@ export function SkillChat({ skill }: SkillChatProps) {
       </div>
 
       {/* Input area */}
+      {isAuthed === false ? (
+        <div className="flex items-center justify-center gap-3 border-t border-border px-4 py-4">
+          <span className="text-sm text-muted-foreground">Войдите чтобы использовать</span>
+          <Link
+            href="/login"
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Войти
+          </Link>
+        </div>
+      ) : (
       <form
         onSubmit={handleSubmit}
         className="flex items-center gap-2 border-t border-border px-4 py-3"
@@ -264,18 +381,19 @@ export function SkillChat({ skill }: SkillChatProps) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Введите вопрос..."
-          disabled={isStreaming}
+          disabled={isStreaming || isAuthed === null}
           className="flex-1 rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/30 disabled:opacity-50"
         />
         <button
           type="submit"
-          disabled={!input.trim() || isStreaming}
+          disabled={!input.trim() || isStreaming || isAuthed === null}
           className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-40"
         >
           <ArrowUpIcon />
           <span className="sr-only">Отправить</span>
         </button>
       </form>
+      )}
     </div>
   );
 }
@@ -287,6 +405,20 @@ function TypingIndicator() {
       <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:150ms]" />
       <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:300ms]" />
     </div>
+  );
+}
+
+function DocxIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      className="h-3.5 w-3.5"
+    >
+      <path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z" />
+      <path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z" />
+    </svg>
   );
 }
 

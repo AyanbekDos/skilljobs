@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Manrope } from "next/font/google";
 import Link from "next/link";
+import { AuthButton } from "@/components/auth-button";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -61,6 +62,7 @@ export default function RootLayout({
                 <span className="size-1.5 rounded-full bg-primary animate-pulse" />
                 Бесплатный доступ
               </span>
+              <AuthButton />
             </div>
           </div>
         </header>
