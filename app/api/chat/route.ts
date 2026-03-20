@@ -4,8 +4,42 @@ import { generateSystemPrompt } from "@/lib/generate-system-prompt";
 
 export const runtime = "edge";
 
+// IP rate limiting: max 30 requests per 10 minutes per IP
+const WINDOW_MS = 10 * 60 * 1000;
+const MAX_REQUESTS = 30;
+const ipCounts = new Map<string, { count: number; resetAt: number }>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = ipCounts.get(ip);
+
+  if (!entry || now > entry.resetAt) {
+    ipCounts.set(ip, { count: 1, resetAt: now + WINDOW_MS });
+    return false;
+  }
+
+  entry.count++;
+  if (entry.count > MAX_REQUESTS) {
+    return true;
+  }
+  return false;
+}
+
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit by IP
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      req.headers.get("x-real-ip") ||
+      "unknown";
+
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        { error: "Слишком много запросов. Подождите несколько минут." },
+        { status: 429 }
+      );
+    }
+
     const { messages, skillId } = await req.json();
 
     if (!messages || !Array.isArray(messages) || !skillId) {
@@ -64,8 +98,6 @@ export async function POST(req: NextRequest) {
           controller.close();
           return;
         }
-
-        const decoder = new TextDecoder();
 
         try {
           while (true) {

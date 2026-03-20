@@ -3,10 +3,8 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import Link from "next/link";
 import type { Pain } from "@/lib/types";
 import { SKILL_TYPE_LABELS } from "@/lib/types";
-import { createClient } from "@/lib/supabase/client";
 
 interface Message {
   role: "user" | "assistant";
@@ -21,16 +19,8 @@ export function SkillChat({ skill }: SkillChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
-  const [isAuthed, setIsAuthed] = useState<boolean | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setIsAuthed(!!user);
-    });
-  }, []);
 
   const scrollToBottom = useCallback(() => {
     if (scrollRef.current) {
@@ -67,6 +57,9 @@ export function SkillChat({ skill }: SkillChatProps) {
         });
 
         if (!response.ok) {
+          if (response.status === 429) {
+            throw new Error("RATE_LIMITED");
+          }
           throw new Error(`HTTP ${response.status}`);
         }
 
@@ -111,12 +104,16 @@ export function SkillChat({ skill }: SkillChatProps) {
             }
           }
         }
-      } catch {
+      } catch (err) {
+        const errorMsg =
+          err instanceof Error && err.message === "RATE_LIMITED"
+            ? "Слишком много запросов. Подождите пару минут и попробуйте снова."
+            : "Произошла ошибка. Попробуйте ещё раз.";
         setMessages((prev) => [
           ...prev,
           {
             role: "assistant",
-            content: "Произошла ошибка. Попробуйте ещё раз.",
+            content: errorMsg,
           },
         ]);
       } finally {
@@ -361,17 +358,6 @@ export function SkillChat({ skill }: SkillChatProps) {
       </div>
 
       {/* Input area */}
-      {isAuthed === false ? (
-        <div className="flex items-center justify-center gap-3 border-t border-border px-4 py-4">
-          <span className="text-sm text-muted-foreground">Войдите чтобы использовать</span>
-          <Link
-            href="/login"
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Войти
-          </Link>
-        </div>
-      ) : (
       <form
         onSubmit={handleSubmit}
         className="flex items-center gap-2 border-t border-border px-4 py-3"
@@ -381,19 +367,18 @@ export function SkillChat({ skill }: SkillChatProps) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Введите вопрос..."
-          disabled={isStreaming || isAuthed === null}
+          disabled={isStreaming}
           className="flex-1 rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/30 disabled:opacity-50"
         />
         <button
           type="submit"
-          disabled={!input.trim() || isStreaming || isAuthed === null}
+          disabled={!input.trim() || isStreaming}
           className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-40"
         >
           <ArrowUpIcon />
           <span className="sr-only">Отправить</span>
         </button>
       </form>
-      )}
     </div>
   );
 }
