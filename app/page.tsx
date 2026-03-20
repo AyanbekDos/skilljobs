@@ -31,8 +31,8 @@ export default function HomePage() {
           {/* Subtitle */}
           <p className="animate-fade-up mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl [animation-delay:160ms]">
             Калькуляторы, генераторы документов, чеклисты и справочники
-            &mdash;&nbsp;всё работает прямо в чате за{" "}
-            <span className="font-semibold text-gold">200&#8376;</span>
+            &mdash;&nbsp;всё работает прямо в чате.{" "}
+            <span className="font-semibold text-primary">Бесплатно</span>
           </p>
 
           {/* CTA hint */}
@@ -83,12 +83,12 @@ export default function HomePage() {
           {/* Stat 3 */}
           <div className="glass animate-fade-up rounded-2xl px-6 py-5 text-center [animation-delay:160ms]">
             <div className="mb-1 flex items-center justify-center gap-2">
-              <svg className="h-5 w-5 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg className="h-5 w-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span className="text-2xl font-bold text-gold">200&#8376;</span>
+              <span className="text-2xl font-bold text-emerald-400">Бесплатно</span>
             </div>
-            <p className="text-sm text-muted-foreground">за скилл</p>
+            <p className="text-sm text-muted-foreground">все инструменты</p>
           </div>
         </div>
       </section>

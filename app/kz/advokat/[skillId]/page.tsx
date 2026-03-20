@@ -120,18 +120,13 @@ export default async function SkillPage({ params }: SkillPageProps) {
             )}
 
             <div className="glow-card flex items-center gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-5 py-4">
-              <span className="text-2xl">&#128176;</span>
+              <span className="text-2xl">&#9889;</span>
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground line-through">
-                    200 &#8376;
-                  </span>
-                  <span className="text-base font-bold text-emerald-400">
-                    Бесплатно
-                  </span>
-                </div>
+                <span className="text-base font-bold text-emerald-400">
+                  Бесплатно
+                </span>
                 <div className="text-xs text-muted-foreground">
-                  Тестовый период
+                  Используйте без ограничений
                 </div>
               </div>
             </div>
@@ -176,29 +171,6 @@ export default async function SkillPage({ params }: SkillPageProps) {
             </div>
           )}
 
-          {/* Pricing section */}
-          <div className="animate-fade-up mt-10 [animation-delay:480ms]">
-            <div className="glass glow-card rounded-2xl p-6">
-              <div className="flex items-center gap-4">
-                <div>
-                  <div className="mb-1 text-sm font-medium uppercase tracking-wider text-muted-foreground">
-                    Стоимость
-                  </div>
-                  <div className="flex items-baseline gap-3">
-                    <span className="text-2xl text-muted-foreground/60 line-through">
-                      200 &#8376;
-                    </span>
-                    <span className="text-3xl font-bold text-emerald-400">
-                      Бесплатно
-                    </span>
-                  </div>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Тестовый период &mdash; пользуйтесь без ограничений
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* RIGHT COLUMN - Chat */}
