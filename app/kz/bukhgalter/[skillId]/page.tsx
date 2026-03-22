@@ -14,7 +14,7 @@ interface SkillPageProps {
 }
 
 export async function generateStaticParams() {
-  const skills = getSkillsByProfession("advokat");
+  const skills = getSkillsByProfession("bukhgalter");
   return skills.map((skill) => ({ skillId: skill.id }));
 }
 
@@ -56,10 +56,10 @@ export default async function SkillPage({ params }: SkillPageProps) {
         </Link>
         <span className="text-border">/</span>
         <Link
-          href="/kz/advokat"
+          href="/kz/bukhgalter"
           className="transition-colors hover:text-foreground"
         >
-          Адвокат
+          Бухгалтер
         </Link>
         <span className="text-border">/</span>
         <span className="truncate text-foreground">{skill.title}</span>

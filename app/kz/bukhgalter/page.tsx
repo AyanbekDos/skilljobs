@@ -4,20 +4,20 @@ import { getSkillsByProfession, getSkillCollections } from "@/lib/skills-data";
 import { CollectionSection } from "@/components/collection-section";
 
 export const metadata: Metadata = {
-  title: "Адвокат — AI-скиллы | SkillJobs",
+  title: "Бухгалтер — AI-скиллы | SkillJobs",
   description:
-    "AI-скиллы для адвокатов Казахстана: калькуляторы, шаблоны документов, чеклисты, справочники",
+    "AI-скиллы для бухгалтеров Казахстана: калькуляторы налогов, шаблоны документов, чеклисты, справочники ставок",
 };
 
-export default function AdvokatPage() {
-  const allSkills = getSkillsByProfession("advokat");
-  const collections = getSkillCollections("advokat");
+export default function BukhgalterPage() {
+  const allSkills = getSkillsByProfession("bukhgalter");
+  const collections = getSkillCollections("bukhgalter");
 
   const stats = [
-    { label: "калькулятора", count: collections.find((c) => c.type === "calculator")?.skills.length ?? 0, icon: "🧮" },
+    { label: "калькуляторов", count: collections.find((c) => c.type === "calculator")?.skills.length ?? 0, icon: "🧮" },
     { label: "документов", count: collections.find((c) => c.type === "template")?.skills.length ?? 0, icon: "📄" },
-    { label: "чеклиста", count: collections.find((c) => c.type === "checklist")?.skills.length ?? 0, icon: "✅" },
-    { label: "справочника", count: collections.find((c) => c.type === "reference")?.skills.length ?? 0, icon: "📚" },
+    { label: "чеклистов", count: collections.find((c) => c.type === "checklist")?.skills.length ?? 0, icon: "✅" },
+    { label: "справочник", count: collections.find((c) => c.type === "reference")?.skills.length ?? 0, icon: "📚" },
     { label: "советник", count: collections.find((c) => c.type === "advisor")?.skills.length ?? 0, icon: "💡" },
   ].filter((s) => s.count > 0);
 
@@ -29,16 +29,16 @@ export default function AdvokatPage() {
           Главная
         </Link>
         <span className="mx-2 text-border">&rarr;</span>
-        <span className="font-medium text-foreground">Адвокат</span>
+        <span className="font-medium text-foreground">Бухгалтер</span>
       </nav>
 
       {/* Header */}
       <div className="mb-12">
         <h1 className="font-heading text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-          Адвокат
+          Бухгалтер
         </h1>
         <p className="mt-3 text-lg text-muted-foreground">
-          {allSkills.length} AI-инструментов для юридической практики
+          {allSkills.length} AI-инструментов для бухгалтерской практики
         </p>
 
         {/* Quick stats */}
@@ -62,7 +62,7 @@ export default function AdvokatPage() {
             key={collection.type}
             type={collection.type}
             skills={collection.skills}
-            professionSlug="advokat"
+            professionSlug="bukhgalter"
           />
         ))}
       </div>
